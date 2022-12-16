@@ -9,31 +9,31 @@ fetch(requestURL)
 .catch(error => alert("Erreur : " + error));
 
 // Affichage des produits
-function showProducts(productsSheet) {
-    for (var i = 0; i < productsSheet.length; i++){
-        var product = productsSheet[i];
-        let allPanels = document.querySelector('.items');
+function showProducts(products) {
+    for (var i = 0; i < products.length; i++){
+        var product = products[i];
+        let elements = document.querySelector('.items');
 
         // insertion du lien de chaque canapés
-        var createLinkPanel = document.createElement('a');
-        createLinkPanel.setAttribute('href', "./product.html?id=" + product._id);
-        allPanels.appendChild(createLinkPanel);
+        var element = document.createElement('a');
+        element.setAttribute('href', "./product.html?id=" + product._id);
+        elements.appendChild(element);
 
         // insertion des articles
         var createArticle = document.createElement('article');
-        createLinkPanel.appendChild(createArticle);
+        element.appendChild(createArticle);
 
         // insertion des images
-        var createPict = document.createElement('img');
-        createPict.setAttribute('src', product.imageUrl);
-        createPict.setAttribute('alt', product.altTxt);
-        createArticle.appendChild(createPict);
+        var createImg = document.createElement('img');
+        createImg.setAttribute('src', product.imageUrl);
+        createImg.setAttribute('alt', product.altTxt);
+        createArticle.appendChild(createImg);
     
         // insertion des noms dans h3
-        var createH3 = document.createElement('h3');
-        createH3.className = 'productName';
-        createH3.textContent = product.name;
-        createArticle.appendChild(createH3);
+        var createTitle = document.createElement('h3');
+        createTitle.className = 'productName';
+        createTitle.textContent = product.name;
+        createArticle.appendChild(createTitle);
 
         // insertion des descriptions dans p
         var createP = document.createElement('p');
