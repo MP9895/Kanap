@@ -1,44 +1,39 @@
-var Kanap = "";
-var requestURL = "http://localhost:3000/api/products/"
-fetch(requestURL)
+fetch("http://localhost:3000/api/products/")
 .then(response => response.json())
-.then(function (resultatAPI) {
-    Kanap = resultatAPI;
-    showProducts(Kanap);
+.then(function (products) {
+    showProducts(products);
 })
 .catch(error => alert("Erreur : " + error));
 
 // Affichage des produits
 function showProducts(products) {
-    for (var i = 0; i < products.length; i++){
-        var product = products[i];
-        let elements = document.querySelector('.items');
+    products.forEach(product => {
 
         // Lien de chaque canapés
-        var element = document.createElement('a');
-        element.setAttribute('href', "./product.html?id=" + product._id);
-        elements.appendChild(element);
+        const a = document.createElement('a');
+        const article = document.createElement('article');
 
-        // Articles
-        var createArticle = document.createElement('article');
-        element.appendChild(createArticle);
+       a.setAttribute('href', "product.html?id=" + product._id);
+       a.appendChild(article);
 
         // Images
         var createImg = document.createElement('img');
         createImg.setAttribute('src', product.imageUrl);
         createImg.setAttribute('alt', product.altTxt);
-        createArticle.appendChild(createImg);
+        article.appendChild(createImg);
     
         // Noms
         var createTitle = document.createElement('h3');
         createTitle.className = 'productName';
         createTitle.textContent = product.name;
-        createArticle.appendChild(createTitle);
+        article.appendChild(createTitle);
 
         // Descriptions
         var createP = document.createElement('p');
         createP.className = 'productDescription';
         createP.textContent = product.description;
-        createArticle.appendChild(createP);
-    }
+        article.appendChild(createP);
+
+        document.querySelector('.items').appendChild(a);
+    });
 }
