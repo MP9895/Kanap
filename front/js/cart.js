@@ -6,8 +6,9 @@ var basket = JSON.parse(basketStr);
 var cartPanel = document.querySelector('#cart__items');
 
 // Affichage des produits dans la page panier (avec les prix en fetch)
-function showProductBasket(produit) {
+function showProduct(produit) {
     // AFFICHAGE DU/DES PRODUIT(S) PANIER
+
     // insertion des articles
     var createArticle = document.createElement('article');
     createArticle.className = 'cart__item';
@@ -21,10 +22,10 @@ function showProductBasket(produit) {
     createArticle.appendChild(createDivIMG);
 
     // insertion des images
-    var createPict = document.createElement('img');
-    createPict.setAttribute('src', produit.img);
-    createPict.setAttribute('alt', "Photographie d'un canapé");
-    createDivIMG.appendChild(createPict);
+    var createIMG = document.createElement('img');
+    createIMG.setAttribute('src', produit.img);
+    createIMG.setAttribute('alt', "Photographie d'un canapé");
+    createDivIMG.appendChild(createIMG);
 
     // insertion div content description
     var createDivContDes = document.createElement('div');
@@ -71,7 +72,7 @@ async function showCart() {
         var totalPrice = 0;
         for (var i = 0 ; i < basket.products.length; i++) {
             basketProduct = basket.products[i];
-            showProductBasket(basketProduct);
+            showProduct(basketProduct);
             var productsPrice = await getProduct(basketProduct.id);
             var productQuantity = basketProduct.quantity;
             totalPrice += productsPrice.price * productQuantity;
