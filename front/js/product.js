@@ -12,46 +12,45 @@ fetch(requestURL)
     productUnit = await resultatAPI;
     showProduct(productUnit);
 })
-.catch(error => alert("Erreur : " + error));
+.catch(error => {
+    alert("Désole, le Kanap choisi n'existe plus");
+    document.querySelector('main').remove();
+    location.href = 'index.html'
+});
 
 // Affichage du produit
 function showProduct(product) {
-    document.title = product.name;
     let Img = document.querySelector('.item__img');
-
-    // Images
+    let H1 = document.querySelector('#title');
+    let Price = document.querySelector('#price');
+    let Description = document.querySelector('#description');
     var createImg = document.createElement('img');
+
+    document.title = product.name;
+    
+    // Images
     createImg.setAttribute('src', product.imageUrl);
     createImg.setAttribute('alt', product.altTxt);
     Img.appendChild(createImg);
 
     // Noms
-    let H1 = document.querySelector('#title');
     H1.textContent = product.name;
 
     // Prix
-    let Price = document.querySelector('#price');
     Price.textContent = product.price;
 
     // Choix
-    let Description = document.querySelector('#description');
     Description.textContent = product.description;
 
-    // Couleurs
-    let Option = document.querySelector('#colors');
-
     // insertion du tableau des couleurs dans une variable
-    var colors = product.colors;
-
-    // Parcours du tableau 
-    for (var i = 0; i < colors.length; i++){
-        var colorProduct = colors[i]; 
-        var createOption = document.createElement('option');
-        createOption.setAttribute('value', colorProduct);
-        createOption.textContent = colorProduct;
-        Option.appendChild(createOption);
-    }
+    product.colors.forEach(color => {
+        var option = document.createElement('option');
+        option.setAttribute('value', color);
+        option.textContent = color;
+        document.querySelector('#colors').appendChild(option);
+    })
 }
+
 
 // Ajout au localstorage
 
@@ -82,10 +81,8 @@ sendToCart.addEventListener('click', function (event) {
         // creation du produit choisi
         let chosenProduct = {
             id: productUnit._id,
-            name: productUnit.name,
             color: valueColor,
             quantity: Number(valueQuantity),
-            img: productUnit.imageUrl,
         }
 
         // ajout de la quantité du produit choisi à la quantité des produits dans le panier (SI ils ont le même id et même color)

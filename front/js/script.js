@@ -1,9 +1,7 @@
+import { fetchData } from "./tools.js";
+const products = await fetchData("http://localhost:3000/api/products/")
 fetch("http://localhost:3000/api/products/")
-.then(response => response.json())
-.then(function (products) {
     showProducts(products);
-})
-.catch(error => alert("Erreur : " + error));
 
 // Affichage des produits
 function showProducts(products) {
@@ -33,7 +31,6 @@ function showProducts(products) {
         createP.className = 'productDescription';
         createP.textContent = product.description;
         article.appendChild(createP);
-
         document.querySelector('.items').appendChild(a);
     });
 }
