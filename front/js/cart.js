@@ -1,4 +1,4 @@
-import { fetchData } from "./tools.js";
+import { store, fetchData } from "./tools.js";
 
 // Récupération du contenu du panier à partir du localstorage
 let isCartEmpty = !localStorage.getItem('basket');
@@ -10,6 +10,9 @@ else {
     const allProducts = await fetchData("http://localhost:3000/api/products/")
     const products = buildCompleteList(allProducts)
     display(products);
+    listenForProductDeletion(products);
+    displayTotal(products);
+    listenForQuantityChange(products);
 }
 
     // Display Total
@@ -19,51 +22,64 @@ else {
 function display(products) {
     products.forEach(product => { displayOne(product) })
 }
+
 function displayOne(product) {
     // AFFICHAGE DU/DES PRODUIT(S) PANIER
 
     // insertion des articles
-    let createArticle = document.createElement('article');
+    const createArticle = document.createElement('article');
     createArticle.className = 'cart__item';
-    createArticle.setAttribute('data-id', product.id);
+    createArticle.setAttribute('data-id', product._id);
     createArticle.setAttribute('data-color', product.color);
     document.querySelector('#cart__items').appendChild(createArticle);
 
     // insertion div de l'img
-    letcreateDivIMG = document.createElement('div');
+    const createDivIMG = document.createElement('div');
     createDivIMG.className = 'cart__item__img';
     createArticle.appendChild(createDivIMG);
 
     // insertion des images
-    letcreateIMG = document.createElement('img');
+    const createIMG = document.createElement('img');
     createIMG.setAttribute('src', product.imageUrl);
     createIMG.setAttribute('alt', "Photographie d'un canapé");
     createDivIMG.appendChild(createIMG);
 
     // insertion div content description
-    letcreateDivContDes = document.createElement('div');
+    const createDivContDes = document.createElement('div');
     createDivContDes.className = 'cart__item__content';
     createArticle.appendChild(createDivContDes);
 
     // insertion div description
-    let createDivDes = document.createElement('div');
+    const createDivDes = document.createElement('div');
     createDivDes.className = 'cart__item__content__description';
     createDivContDes.appendChild(createDivDes);
 
     // insertion H2
-    let createH2 = document.createElement('h2');
+    const createH2 = document.createElement('h2');
     createH2.textContent = product.name;
     createDivDes.appendChild(createH2);
 
     // insertion P color
-    let createpColor = document.createElement('p');
+    const createpColor = document.createElement('p');
     createpColor.textContent = "Couleur : " + product.color;
     createDivDes.appendChild(createpColor);
+
+    // insertion delete button
+    const deleteButton = document.createElement('span');
+    createpColor.textContent = "Supprimer";
+    createpColor.classList.add('deleteItem')
+    createDivDes.appendChild(deleteButton);
+
+    // insertion change quantity
+    // const changeQuantityButton = document.createElement('span');
+    // createpColor.textContent = "Changer la quantité";
+    // createpColor.classList.add('changeQuantity')
+    // createDivDes.appendChild(changeQuantityButton);
 }
    
 function buildCompleteList(all) {
     const list = []
-    const cart = JSON.parse(localStorage.getItem('products'));
+    const cart = JSON.parse(localStorage.getItem('basket'));
     cart.forEach(productInCart => {
         const findProduct = all.find(a => a._id = productInCart.id)
         const item = {...findProduct};
@@ -75,25 +91,30 @@ function buildCompleteList(all) {
     return list;
 }
 
-// Suppression d'un prduit dans le panier
-function deleteProduct() {
-    let deleteItem = document.querySelectorAll('.deleteItem');
-    for (let i = 0; i < delItem.length; i++) {
-        deleteItemUnit = deleteItem[i];
-        deleteItemUnit.addEventListener('click', function(event) {
-            let articleDeleteItemID = event.target.closest('article').getAttribute("data-id");
-            let articleDeleteItemColor = event.target.closest('article').getAttribute("data-color");
-            
-            var basket = JSON.parse(basketStr);   
-            productToDelete = basket.products.find(element => element.id == articleDeleteItemID && element.color == articleDeleteItemColor);
-            
-            result = basket.products.filter(element => element.id !== articleDeleteItemID || element.color !== articleDeleteItemColor);
-            basket.products = result;
+function listenForProductDeletion() {
+    document.querySelectorAll('.deleteItem').forEach(button => {
+        button.addEventListener('click', function(event) {
+            let id = event.target.closest('article').getAttribute("data-id");
+            let color = event.target.closest('article').getAttribute("data-color");
 
-            newQuantity = basket.totalQuantity - productToDelete.quantity;
-            basket.totalQuantity = newQuantity;
-            priceToDelete = productToDelete.quantity * productToDelete.price;
+            let basket = JSON.parse(localStorage.getItem('basket'));  
+            basket = basket.filter(element => element.id !== id && element.color !== color);
+            store('basket', basket)
+
             alert('Vous avez bien supprimé votre produit du panier');
+            window.location.reload();
         })
-    };
+    })
+}
+
+function displayTotal() {
+    let price = 2500
+    let qty = 5
+
+    document.querySelector('#totalPrice').innerText = price
+    document.querySelector('#totalQuantity').innerText = qty
+}
+
+function listenForQuantityChange() {
+
 }

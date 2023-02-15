@@ -1,22 +1,13 @@
-// Récupération de l'id dans l'URL
-var string = window.location.href;
-var url = new URL(string);
-var idURL = url.searchParams.get("id");
+import { fetchData, store } from "./tools.js";
 
-// Appel API avec l'id du produit
-var productUnit = "";
-var requestURL = "http://localhost:3000/api/products/" + idURL
-fetch(requestURL)
-.then(response => response.json())
-.then(async function (resultatAPI) {
-    productUnit = await resultatAPI;
-    showProduct(productUnit);
+const id = getIdFromUrl();
+
+fetchData("http://localhost:3000/api/products/" + id)
+.then(function (product) {
+    showProduct(product);
+    listenForCartAddition(product)
 })
-.catch(error => {
-    alert("Désole, le Kanap choisi n'existe plus");
-    document.querySelector('main').remove();
-    location.href = 'index.html'
-});
+
 
 // Affichage du produit
 function showProduct(product) {
@@ -51,62 +42,56 @@ function showProduct(product) {
     })
 }
 
+function listenForCartAddition(product) {
+    // écoute du click sur l'ajout au panier
+    document.querySelector('#addToCart').addEventListener('click', function (event) {
 
-// Ajout au localstorage
-
-// récupération de #colors, #quantity et #addToCard
-let chosenColor = document.querySelector('#colors');
-let chosenQuantity = document.querySelector('#quantity');
-let sendToCart = document.querySelector('#addToCart');
-
-// écoute du click sur l'ajout au panier
-sendToCart.addEventListener('click', function (event) {
-    // récupération des valeurs de quantité et de couleurs du produit choisi dans des variables
-    let valueColor = chosenColor.value; 
-    let valueQuantity = chosenQuantity.value;
-    if (valueQuantity <= 0 || valueQuantity > 100 || valueColor == ""){
-        alert("Veuillez choisir une quantité entre 1 et 100 et/ou une couleur de canapé");
-    } else {
-        // récupération du contenu du panier (sans produit choisi de la page actuel)
-        let basketStr = localStorage.getItem('basket');
-        if (basketStr == null) {
-            var basket = {
-                totalQuantity: 0,
-                products: []
+        let color = document.querySelector('#colors').value;
+        let quantity = document.querySelector('#quantity').value;
+ 
+        // récupération des valeurs de quantité et de couleurs du produit choisi dans des variables
+        if (quantity <= 0 || quantity > 100 || color == ""){
+            alert("Veuillez choisir une quantité entre 1 et 100 et/ou une couleur de canapé");
+        } else {
+            // récupération du contenu du panier (sans produit choisi de la page actuel)
+            let basketStr = localStorage.getItem('basket');
+            if (basketStr == null) {
+                var basket = []
+            } else { 
+                var basket = JSON.parse(basketStr)
             }
-        } else { 
-            var basket = JSON.parse(basketStr)
-        }
 
-        // creation du produit choisi
-        let chosenProduct = {
-            id: productUnit._id,
-            color: valueColor,
-            quantity: Number(valueQuantity),
-        }
-
-        // ajout de la quantité du produit choisi à la quantité des produits dans le panier (SI ils ont le même id et même color)
-        boolean = false;
-        for (var i = 0 ; i < basket.products.length; i++) {
-            basketProduct = basket.products[i];
-            if (basketProduct.id == chosenProduct.id && basketProduct.color == chosenProduct.color) {
-                newQuantity = basketProduct.quantity + chosenProduct.quantity;
-                basketProduct.quantity = newQuantity;
-                basket.totalQuantity = chosenProduct.quantity + basket.totalQuantity;
-                boolean = true;
-                break;
+            // creation du produit choisi
+            let chosenProduct = {
+                id: product._id,
+                color: color,
+                quantity: Number(quantity),
             }
-        } 
 
-        // ajout du produit choisi dans le panier (SI ils ont pas le même id et même color)
-        if (boolean == false) {
-            basket.products.push(chosenProduct);
-            newQuantity = basket.totalQuantity + chosenProduct.quantity;
-            basket.totalQuantity = newQuantity;
+            // ajout de la quantité du produit choisi à la quantité des produits dans le panier (SI ils ont le même id et même color)
+            let boolean = false;
+            for (var i = 0 ; i < basket.length; i++) {
+                let basketProduct = basket[i];
+                if (basketProduct.id == chosenProduct.id && basketProduct.color == chosenProduct.color) {
+                    let newQuantity = basketProduct.quantity + chosenProduct.quantity;
+                    basketProduct.quantity = newQuantity;
+                    boolean = true;
+                    break;
+                }
+            } 
+
+            // ajout du produit choisi dans le panier (SI ils ont pas le même id et même color)
+            if (boolean == false) {
+                basket.push(chosenProduct);
+            }
+
+            alert('Le produit ' + chosenProduct.quantity + ' ' + product.name + ' ' + chosenProduct.color + ' est bien ajoutée au panier !');
+            store("basket", basket)
         }
-        alert('Le produit ' + chosenProduct.quantity + ' ' + productUnit.name + ' ' + chosenProduct.color + ' est bien ajoutée au panier !');
-        let lineBasket = JSON.stringify(basket);
-        localStorage.setItem("basket", lineBasket);
-        window.location.reload();
-    }
-});
+    });
+}
+
+function getIdFromUrl() {
+    const url = new URL (window.location.href);
+    return url.searchParams.get("id");
+}
