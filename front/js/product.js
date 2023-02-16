@@ -1,4 +1,4 @@
-import { fetchData, store } from "./tools.js";
+import { fetchData, store, get, has, price } from "./tools.js";
 
 const id = getIdFromUrl();
 
@@ -15,7 +15,7 @@ function showProduct(product) {
     let H1 = document.querySelector('#title');
     let Price = document.querySelector('#price');
     let Description = document.querySelector('#description');
-    var createImg = document.createElement('img');
+    let createImg = document.createElement('img');
 
     document.title = product.name;
     
@@ -28,14 +28,14 @@ function showProduct(product) {
     H1.textContent = product.name;
 
     // Prix
-    Price.textContent = product.price;
+    Price.textContent = price(product.price);
 
     // Choix
     Description.textContent = product.description;
 
     // insertion du tableau des couleurs dans une variable
     product.colors.forEach(color => {
-        var option = document.createElement('option');
+        let option = document.createElement('option');
         option.setAttribute('value', color);
         option.textContent = color;
         document.querySelector('#colors').appendChild(option);
@@ -54,11 +54,10 @@ function listenForCartAddition(product) {
             alert("Veuillez choisir une quantité entre 1 et 100 et/ou une couleur de canapé");
         } else {
             // récupération du contenu du panier (sans produit choisi de la page actuel)
-            let basketStr = localStorage.getItem('basket');
-            if (basketStr == null) {
-                var basket = []
-            } else { 
-                var basket = JSON.parse(basketStr)
+            let basket = [];
+
+            if (!has('basket')) {
+                basket = get('basket');
             }
 
             // creation du produit choisi
@@ -70,7 +69,7 @@ function listenForCartAddition(product) {
 
             // ajout de la quantité du produit choisi à la quantité des produits dans le panier (SI ils ont le même id et même color)
             let boolean = false;
-            for (var i = 0 ; i < basket.length; i++) {
+            for (let i = 0 ; i < basket.length; i++) {
                 let basketProduct = basket[i];
                 if (basketProduct.id == chosenProduct.id && basketProduct.color == chosenProduct.color) {
                     let newQuantity = basketProduct.quantity + chosenProduct.quantity;

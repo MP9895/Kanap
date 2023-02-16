@@ -1,7 +1,7 @@
-import { store, fetchData } from "./tools.js";
+import { store, fetchData, get, has, price } from "./tools.js";
 
 // Récupération du contenu du panier à partir du localstorage
-let isCartEmpty = !localStorage.getItem('basket');
+let isCartEmpty = !has('basket');
 if (isCartEmpty) {
     document.querySelector('h1').innerText = 'Votre panier est vide'
     document.querySelector('.cart').remove();
@@ -15,79 +15,47 @@ else {
     listenForQuantityChange(products);
 }
 
-    // Display Total
-    // Listen for quantity change
-
-// Affichage des produits dans la page panier (avec les prix en fetch)
 function display(products) {
     products.forEach(product => { displayOne(product) })
 }
 
 function displayOne(product) {
-    // AFFICHAGE DU/DES PRODUIT(S) PANIER
-
-    // insertion des articles
-    const createArticle = document.createElement('article');
-    createArticle.className = 'cart__item';
-    createArticle.setAttribute('data-id', product._id);
-    createArticle.setAttribute('data-color', product.color);
-    document.querySelector('#cart__items').appendChild(createArticle);
-
-    // insertion div de l'img
-    const createDivIMG = document.createElement('div');
-    createDivIMG.className = 'cart__item__img';
-    createArticle.appendChild(createDivIMG);
-
-    // insertion des images
-    const createIMG = document.createElement('img');
-    createIMG.setAttribute('src', product.imageUrl);
-    createIMG.setAttribute('alt', "Photographie d'un canapé");
-    createDivIMG.appendChild(createIMG);
-
-    // insertion div content description
-    const createDivContDes = document.createElement('div');
-    createDivContDes.className = 'cart__item__content';
-    createArticle.appendChild(createDivContDes);
-
-    // insertion div description
-    const createDivDes = document.createElement('div');
-    createDivDes.className = 'cart__item__content__description';
-    createDivContDes.appendChild(createDivDes);
-
-    // insertion H2
-    const createH2 = document.createElement('h2');
-    createH2.textContent = product.name;
-    createDivDes.appendChild(createH2);
-
-    // insertion P color
-    const createpColor = document.createElement('p');
-    createpColor.textContent = "Couleur : " + product.color;
-    createDivDes.appendChild(createpColor);
-
-    // insertion delete button
-    const deleteButton = document.createElement('span');
-    createpColor.textContent = "Supprimer";
-    createpColor.classList.add('deleteItem')
-    createDivDes.appendChild(deleteButton);
-
-    // insertion change quantity
-    // const changeQuantityButton = document.createElement('span');
-    // createpColor.textContent = "Changer la quantité";
-    // createpColor.classList.add('changeQuantity')
-    // createDivDes.appendChild(changeQuantityButton);
+    const div = document.createElement('div');
+    document.querySelector('#cart__items').appendChild(div);
+    div.innerHTML = `
+        <article class="cart__item" data-id="${product._id}" data-color="${product.color}">
+        <div class="cart__item__img">
+        <img src="${product.imageUrl}" alt="${product.altText}">
+        </div>
+        <div class="cart__item__content">
+        <div class="cart__item__content__description">
+            <h2>${product.name}</h2>
+            <p>${product.color}</p>
+            <p>${price(product.price)}</p>
+        </div>
+        <div class="cart__item__content__settings">
+            <div class="cart__item__content__settings__quantity">
+            <p>Qté : </p>
+            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.qty}">
+            </div>
+            <div class="cart__item__content__settings__delete">
+            <p class="deleteItem">Supprimer</p>
+            </div>
+        </div>
+        </div>
+    </article>`
 }
    
 function buildCompleteList(all) {
     const list = []
-    const cart = JSON.parse(localStorage.getItem('basket'));
+    const cart = get('basket');
     cart.forEach(productInCart => {
-        const findProduct = all.find(a => a._id = productInCart.id)
+        const findProduct = all.find(a => a._id === productInCart.id)
         const item = {...findProduct};
         item.qty = productInCart.quantity
         item.color = productInCart.color
         list.push(item)
     })
-
     return list;
 }
 
@@ -97,8 +65,8 @@ function listenForProductDeletion() {
             let id = event.target.closest('article').getAttribute("data-id");
             let color = event.target.closest('article').getAttribute("data-color");
 
-            let basket = JSON.parse(localStorage.getItem('basket'));  
-            basket = basket.filter(element => element.id !== id && element.color !== color);
+            let basket = get('basket');  
+            basket = basket.filter(element => ! (element.id === id && element.color === color));
             store('basket', basket)
 
             alert('Vous avez bien supprimé votre produit du panier');
@@ -107,14 +75,16 @@ function listenForProductDeletion() {
     })
 }
 
-function displayTotal() {
-    let price = 2500
-    let qty = 5
+function displayTotal(products) {
+    let qty = 0
+    let total = 0
 
-    document.querySelector('#totalPrice').innerText = price
+    products.forEach(product => 
+    {
+        qty = qty + Number(product.qty)
+        total = total + (Number(product.qty) * Number(product.price))
+    })
+
+    document.querySelector('#totalPrice').innerText = price(total)
     document.querySelector('#totalQuantity').innerText = qty
-}
-
-function listenForQuantityChange() {
-
 }
