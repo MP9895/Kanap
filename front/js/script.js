@@ -15,19 +15,19 @@ function showProducts(products) {
        a.appendChild(article);
 
         // Images
-        var createImg = document.createElement('img');
+        let createImg = document.createElement('img');
         createImg.setAttribute('src', product.imageUrl);
         createImg.setAttribute('alt', product.altTxt);
         article.appendChild(createImg);
     
         // Noms
-        var createTitle = document.createElement('h3');
+        let createTitle = document.createElement('h3');
         createTitle.className = 'productName';
         createTitle.textContent = product.name;
         article.appendChild(createTitle);
 
         // Descriptions
-        var createP = document.createElement('p');
+        let createP = document.createElement('p');
         createP.className = 'productDescription';
         createP.textContent = product.description;
         article.appendChild(createP);

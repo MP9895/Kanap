@@ -7,7 +7,10 @@ fetchData("http://localhost:3000/api/products/" + id)
     showProduct(product);
     listenForCartAddition(product)
 })
-
+.catch(e => {
+    alert("Ce produit n'est plus disponible, vous allez être redirigés")
+    location.href = 'index.html'
+})
 
 // Affichage du produit
 function showProduct(product) {
@@ -52,41 +55,45 @@ function listenForCartAddition(product) {
         // récupération des valeurs de quantité et de couleurs du produit choisi dans des variables
         if (quantity <= 0 || quantity > 100 || color == ""){
             alert("Veuillez choisir une quantité entre 1 et 100 et/ou une couleur de canapé");
-        } else {
-            // récupération du contenu du panier (sans produit choisi de la page actuel)
-            let basket = [];
-
-            if (!has('basket')) {
-                basket = get('basket');
-            }
-
-            // creation du produit choisi
-            let chosenProduct = {
-                id: product._id,
-                color: color,
-                quantity: Number(quantity),
-            }
-
-            // ajout de la quantité du produit choisi à la quantité des produits dans le panier (SI ils ont le même id et même color)
-            let boolean = false;
-            for (let i = 0 ; i < basket.length; i++) {
-                let basketProduct = basket[i];
-                if (basketProduct.id == chosenProduct.id && basketProduct.color == chosenProduct.color) {
-                    let newQuantity = basketProduct.quantity + chosenProduct.quantity;
-                    basketProduct.quantity = newQuantity;
-                    boolean = true;
-                    break;
-                }
-            } 
-
-            // ajout du produit choisi dans le panier (SI ils ont pas le même id et même color)
-            if (boolean == false) {
-                basket.push(chosenProduct);
-            }
-
-            alert('Le produit ' + chosenProduct.quantity + ' ' + product.name + ' ' + chosenProduct.color + ' est bien ajoutée au panier !');
-            store("basket", basket)
+            return;
         }
+        // récupération du contenu du panier (sans produit choisi de la page actuel)
+        let basket = [];
+
+        if (has('basket')) {
+            basket = get('basket');
+        }
+
+        // creation du produit choisi
+        let chosenProduct = {
+            id: product._id,
+            color: color,
+            quantity: Number(quantity),
+        }
+
+        // ajout de la quantité du produit choisi à la quantité des produits dans le panier (SI ils ont le même id et même color)
+        let boolean = false;
+        for (let i = 0 ; i < basket.length; i++) {
+            let basketProduct = basket[i];
+            if (basketProduct.id == chosenProduct.id && basketProduct.color == chosenProduct.color) {
+                let newQuantity = basketProduct.quantity + chosenProduct.quantity;
+                if (newQuantity <= 0 || newQuantity > 100){
+                    alert("Veuillez choisir une quantité entre 1 et 100");
+                    return;
+                }
+                basketProduct.quantity = newQuantity;
+                boolean = true;
+                break;
+            }
+        } 
+
+        // ajout du produit choisi dans le panier (SI ils ont pas le même id et même color)
+        if (boolean == false) {
+            basket.push(chosenProduct);
+        }
+
+        alert('Le produit ' + chosenProduct.quantity + ' ' + product.name + ' ' + chosenProduct.color + ' est bien ajoutée au panier !');
+        store("basket", basket)
     });
 }
 

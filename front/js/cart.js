@@ -12,7 +12,7 @@ else {
     display(products);
     listenForProductDeletion(products);
     displayTotal(products);
-    listenForQuantityChange(products);
+    // listenForQuantityChange(products);
 }
 
 function display(products) {
@@ -89,60 +89,26 @@ function displayTotal(products) {
     document.querySelector('#totalQuantity').innerText = qty
 }
 
-// Validation du formulaire
-let form = document.querySelector(".cart__order__form");
-
-// REGEX
-let adressRegExp = new RegExp("^[A-zÀ-ú0-9 ,.'\-]+$");
-let nameRegExp = new RegExp("^[A-zÀ-ú \-]+$");
-let emailRegExp = new RegExp("^[a-zA-Z0-9_. -]+@[a-zA-Z.-]+[.]{1}[a-z]{2,10}$");
-
-let firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
-form.firstName.addEventListener('change', function(e) {
-    let value = e.target.value;
-    if (nameRegExp.test(value)){
-        firstNameErrorMsg.innerHTML = '';
-    } else {
-        firstNameErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre prénom.';
-    }
-});
-
-let lastNameErrorMsg = form.lastName.nextElementSibling;
-form.lastName.addEventListener('change', function(e) {
-    let value = e.target.value;
-    if (nameRegExp.test(value)){
-        lastNameErrorMsg.innerHTML = '';
-    } else {
-        lastNameErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre nom.';
-    }
-});
-
-let adressErrorMsg = document.querySelector('#addressErrorMsg');
-form.address.addEventListener('change', function(e) {
-    let value = e.target.value;
-    if (adressRegExp.test(value)){
-        adressErrorMsg.innerHTML = '';
-    } else {
-        adressErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre adresse postale.';
-    }
-});
-
-let cityErrorMsg = document.querySelector('#cityErrorMsg');
-form.city.addEventListener('change', function(e) {
-    let value = e.target.value;
-    if (nameRegExp.test(value)){
-        cityErrorMsg.innerHTML = '';
-    } else {
-        cityErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre ville.';
-    }
-});
-
-let emailErrorMsg = document.querySelector('#emailErrorMsg');
-form.email.addEventListener('change', function(e) {
-    let value = e.target.value;
-    if (emailRegExp.test(value)){
-        emailErrorMsg.innerHTML = '';
-    } else {
-        emailErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre adresse email.';
-    }
-});
+// function listenForQuantityChange() {
+//     let quantityItem = document.querySelectorAll('.itemQuantity');
+//     for (let k = 0; k < quantityItem.length; k++) { 
+//         quantityItemUnit = quantityItem[k];
+//         quantityItemUnit.addEventListener('change', function(event) {
+//             for (let l = 0 ; l < basket.products.length; l++) {
+//                 basketProduct = basket.products[l];
+//                 let articleQuantityItemID = event.target.closest('article').getAttribute("data-id");
+//                 let articleQuantityItemColor = event.target.closest('article').getAttribute("data-color");
+//                 newQuantityValue = event.target.valueAsNumber;
+                
+//                 if (basketProduct.id == articleQuantityItemID && basketProduct.color == articleQuantityItemColor) {
+//                     qtyToAdd = newQuantityValue - basketProduct.quantity;
+//                     basketProduct.quantity = newQuantityValue;
+//                     basket.totalQuantity = basket.totalQuantity + qtyToAdd;
+//                     let lineBasket = JSON.stringify(basket);
+//                     localStorage.setItem("basket", lineBasket);
+//                     window.location.reload();
+//                 }
+//             }  
+//         })
+//     };
+// }
