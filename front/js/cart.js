@@ -12,7 +12,7 @@ else {
     display(products);
     listenForProductDeletion(products);
     displayTotal(products);
-    // listenForQuantityChange(products);
+    listenForQuantityChange(products);
 }
 
 function display(products) {
@@ -89,26 +89,26 @@ function displayTotal(products) {
     document.querySelector('#totalQuantity').innerText = qty
 }
 
-// function listenForQuantityChange() {
-//     let quantityItem = document.querySelectorAll('.itemQuantity');
-//     for (let k = 0; k < quantityItem.length; k++) { 
-//         quantityItemUnit = quantityItem[k];
-//         quantityItemUnit.addEventListener('change', function(event) {
-//             for (let l = 0 ; l < basket.products.length; l++) {
-//                 basketProduct = basket.products[l];
-//                 let articleQuantityItemID = event.target.closest('article').getAttribute("data-id");
-//                 let articleQuantityItemColor = event.target.closest('article').getAttribute("data-color");
-//                 newQuantityValue = event.target.valueAsNumber;
-                
-//                 if (basketProduct.id == articleQuantityItemID && basketProduct.color == articleQuantityItemColor) {
-//                     qtyToAdd = newQuantityValue - basketProduct.quantity;
-//                     basketProduct.quantity = newQuantityValue;
-//                     basket.totalQuantity = basket.totalQuantity + qtyToAdd;
-//                     let lineBasket = JSON.stringify(basket);
-//                     localStorage.setItem("basket", lineBasket);
-//                     window.location.reload();
-//                 }
-//             }  
-//         })
-//     };
-// }
+function listenForQuantityChange() {
+    let inputs = document.querySelectorAll('.itemQuantity');
+
+    inputs.forEach(input => {
+        input.addEventListener('change', function(event) {
+
+            const qty = event.target.valueAsNumber;
+            if (qty <= 0 || qty > 100){
+                alert("Veuillez choisir une quantité entre 1 et 100");
+                return;
+            }
+
+            const id = event.target.closest('article').getAttribute("data-id");
+            const color = event.target.closest('article').getAttribute("data-color");
+            const products = get('basket');
+            const product = products.find(p => p.id == id && p.color == color)
+            product.quantity = qty;
+            
+            store('basket', products);
+            window.location.reload();
+        })
+    });
+}

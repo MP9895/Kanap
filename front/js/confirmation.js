@@ -1,4 +1,4 @@
-var btnOrder = document.querySelector('#order');
+let btnOrder = document.querySelector('#order');
 
 btnOrder.addEventListener('click', function(e) {
     e.preventDefault();
