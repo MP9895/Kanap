@@ -1,106 +1,135 @@
-// Validation du formulaire
 let form = document.querySelector(".cart__order__form");
 
-form.firstName.addEventListener('input', function(e) {
-    let value = e.target.value;
-    hideError(form.firstName);;
-    if (!isFirstNameValid(value)) {
-        showError(form.firstName, 'Champ invalide, veuillez vérifier votre prénom.');
-    }
-});
+btnSendForm.addEventListener('click', (e) => {
+e.preventDefault();
 
-form.lastName.addEventListener('input', function(e) {
-    let value = e.target.value;
-    hideError(form.lastName);
-    if (!isLastNameValid(value)) {
-        showError(form.lastName, 'Champ invalide, veuillez vérifier votre nom.');
-    }
-});
+const contact = {
+    firstName : document.querySelector("#firstName").value,
+    lastName : document.querySelector("#lastName").value,
+    address : document.querySelector("#address").value,
+    city : document.querySelector("#city").value,
+    email : document.querySelector("#email").value,
+    
+};
 
-form.address.addEventListener('input', function(e) {
-    let value = e.target.value;
-    hideError(form.address);;
-    if (!isAdressValid.test(value)) {
-        showError(form.address, 'Champ invalide, veuillez vérifier votre adresse postale.');
+function firstNameControle () {     
+    const firstName = contact.firstName;  
+    let inputFirstName = document.querySelector("#firstName");
+    if (/^([A-Za-z\s]{3,20})?([-]{0,1})?([A-Za-z]{3,20})$/.test(firstName)) {
+        inputFirstName.style.border = "solid 2px green";
+        document.querySelector("#firstNameErrorMsg").textContent = "";
+        return true;
+    } 
+    
+    else {
+        inputFirstName.style.border = "solid 2px red";
+        document.querySelector("#firstNameErrorMsg").textContent = "Champ Prénom de formulaire invalide, ex: Bernard";
+        return false;
     }
-});
+    
+}
 
-form.city.addEventListener('input', function(e) {
-    let value = e.target.value;
-    hideError(form.city);
-    if (!isCityValid.test(value)) {
-        showError(form.city, 'Champ invalide, veuillez vérifier votre ville.');
+function lastNameControle () {     
+    const lastName = contact.lastName; 
+    let inputLastName = document.querySelector("#lastName"); 
+    if (/^([A-Za-z\s]{3,20})?([-]{0,1})?([A-Za-z]{3,20})$/.test(lastName)) {
+        inputLastName.style.border = "solid 2px green";
+        document.querySelector("#lastNameErrorMsg").textContent = "";
+        return true;
+    } 
+            
+    else {
+        inputLastName.style.border = "solid 2px red";
+        document.querySelector("#lastNameErrorMsg").textContent = "Champ Nom de formulaire invalide, ex: Durand";
+        return false;
     }
-});
+        
+}
 
-form.email.addEventListener('input', function(e) {
-    let value = e.target.value;
-    hideError(form.email);
-    if (!isMailValid.test(value)) {
-        showError(form.email, 'Champ invalide, veuillez vérifier votre adresse email.');
+function addressControl () {     
+    const adresse = contact.address;  
+    let inputAddress = document.querySelector("#address");
+    if (/^[A-Za-z0-9\s]{5,100}$/.test(adresse)) {
+        inputAddress.style.border = "solid 2px green";
+        document.querySelector("#addressErrorMsg").textContent = "";
+        return true;
+    } 
+    
+    else {
+        inputAddress.style.border = "solid 2px red";
+        document.querySelector("#addressErrorMsg").textContent = "Champ Adresse de formulaire invalide, ex: 50 rue de la paix";
+        return false;
     }
-});
+    
+}
 
-document.getElementById('order').addEventListener('click', (e) => {
-    e.preventDefault
-    const firstName = form.firstName.value;
-    const lastName = form.lastName.value;
-    if (isFirstNameValid(firstName) && isLastNameValid(lastName)) {
-        console.log('Le formulaire est bon');
+function cityControl () {     
+    const city = contact.city;  
+    let inputCity = document.querySelector("#city");
+    if (/^([A-Za-z\s]{3,20})?([-]{0,1})?([A-Za-z]{3,20})$/.test(city)) {
+        inputCity.style.border = "solid 2px green";
+        document.querySelector("#cityErrorMsg").textContent = "";
+        return true;
+    } 
+    
+    else {
+        inputCity.style.border = "solid 2px red";
+        document.querySelector("#cityErrorMsg").textContent = "Champ Ville de formulaire invalide, ex: Bordeaux";
+        return false;
     }
+    
+}
+
+function emailControle () {     
+    const email = contact.email;  
+    let inputMail = document.querySelector("#email");
+    if (/^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$/.test(email)) {
+        inputMail.style.border = "solid 2px green";
+        document.querySelector("#emailErrorMsg").textContent = "";
+        return true;
+    } 
+    
+    else {
+        inputMail.style.border = "solid 2px red";
+        document.querySelector("#emailErrorMsg").textContent = "Champ Email de formulaire invalide, ex: example@contact.fr";
+        return false;
+    }
+    
+}
+
+if (firstNameControle() && lastNameControle() && addressControl() && cityControl() && emailControle()) {
+    localStorage.setItem("contact", JSON.stringify(contact));
+    sendFromToServer();
+} 
+
+else {
+    alert("Veuillez bien remplir le formulaire")
+}
+
+
+var orderId = "";
+
+function sendFromToServer () {
+
+    fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        body:JSON.stringify({contact, products}) ,
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }) 
+    
+    .then((response) => {
+        return response.json();
+    })
+    
+
+    .then((server) => {
+        orderId = server.orderId;
+        if (orderId != "") {
+            alert("Votre commande à bient était prise en compte");
+            location.href = "confirmation.html?id=" + orderId;
+        }
+    })
+}
 })
-
-function showError(input, message) {
-    const el = input.nextElementSibling
-    el.innerHTML = message;
-}
-
-function hideError(input) {
-    const el = input.nextElementSibling
-    el.innerHTML = '';
-}
-
-function isFirstNameValid(value) {
-    let regEx = new RegExp("^[A-zÀ-ú \-]+$");
-
-    if (!regEx.test(value)) {
-        return false
-    }
-    return true;
-}
-
-function isLastNameValid(value) {
-    let regEx = new RegExp("^[A-zÀ-ú \-]+$");
-
-    if (!regEx.test(value)) {
-        return false
-    }
-    return true;
-}
-
-function isAdressValid(value) {
-    let regEx = new RegExp("^[A-zÀ-ú0-9 ,.'\-]+$");
-
-    if (!regEx.test(value)) {
-        return false
-    }
-    return true;
-}
-
-function isCityValid(value) {
-    let regEx = new RegExp("^[A-zÀ-ú0-9 ,.'\-]+$");
-
-    if (!regEx.test(value)) {
-        return false
-    }
-    return true;
-}
-
-function isMailValid(value) {
-    let regEx = new RegExp("^[a-zA-Z0-9_. -]+@[a-zA-Z.-]+[.]{1}[a-z]{2,10}$");
-
-    if (!regEx.test(value)) {
-        return false
-    }
-    return true;
-}
