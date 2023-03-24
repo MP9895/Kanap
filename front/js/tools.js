@@ -24,4 +24,9 @@ function price(amount) {
     return formatter.format(amount);
 }
 
-export {fetchData, store, get, has, price}
+function getFromUrl(key) {
+    const url = new URL (window.location.href);
+    return url.searchParams.get(key);
+}
+
+export {fetchData, store, get, getFromUrl, has, price}

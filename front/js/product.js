@@ -1,6 +1,6 @@
-import { fetchData, store, get, has, price } from "./tools.js";
+import { fetchData, store, get, getFromUrl, has, price } from "./tools.js";
 
-const id = getIdFromUrl();
+const id = getFromUrl('id');
 
 fetchData("http://localhost:3000/api/products/" + id)
 .then(function (product) {
@@ -95,9 +95,4 @@ function listenForCartAddition(product) {
         alert('Le produit ' + chosenProduct.quantity + ' ' + product.name + ' ' + chosenProduct.color + ' est bien ajoutée au panier !');
         store("basket", basket)
     });
-}
-
-function getIdFromUrl() {
-    const url = new URL (window.location.href);
-    return url.searchParams.get("id");
 }

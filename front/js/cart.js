@@ -95,16 +95,18 @@ function listenForQuantityChange() {
     inputs.forEach(input => {
         input.addEventListener('change', function(event) {
 
+            const products = get('basket');
+            const id = event.target.closest('article').getAttribute("data-id");
+            const color = event.target.closest('article').getAttribute("data-color");
+            const product = products.find(p => p.id == id && p.color == color)
             const qty = event.target.valueAsNumber;
+
             if (qty <= 0 || qty > 100){
                 alert("Veuillez choisir une quantité entre 1 et 100");
+                input.value = product.quantity 
                 return;
             }
 
-            const id = event.target.closest('article').getAttribute("data-id");
-            const color = event.target.closest('article').getAttribute("data-color");
-            const products = get('basket');
-            const product = products.find(p => p.id == id && p.color == color)
             product.quantity = qty;
             
             store('basket', products);
