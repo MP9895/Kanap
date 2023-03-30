@@ -8,7 +8,7 @@ form.addEventListener('submit', (e) => {
     const isFormValid = (isFirstNameValid() && isLastNameValid() && isAddressValid() && isCityValid() && isEmailValid())
 
     if (!isFormValid) {
-        alert('Votre commande est valdiée')
+        alert('Votre commande est validée')
         return;
     }
 
