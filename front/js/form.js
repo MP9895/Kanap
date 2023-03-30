@@ -31,7 +31,7 @@ form.addEventListener('submit', (e) => {
         }) 
         .then((response) => response.json())
         .then((data) => {
-            alert("Votre commande à bient était prise en compte");
+            alert("Votre commande à bien était prise en compte");
             location.href = "confirmation.html?orderId=" + data.orderId;
     })
 
