@@ -38,6 +38,9 @@ form.addEventListener('submit', (e) => {
 
 })
 
+document.querySelector("#firstName").addEventListener('input', () => {
+    isFirstNameValid ()
+})
 function isFirstNameValid () {
     let firstName = document.querySelector("#firstName").value;
     if (/^([A-Za-z\s]{3,20})?([-]{0,1})?([A-Za-z]{3,20})$/.test(firstName)) {
@@ -48,6 +51,9 @@ function isFirstNameValid () {
     return false;
 }
 
+document.querySelector("#lastName").addEventListener('input', () => {
+    isLastNameValid ()
+})
 function isLastNameValid () {
     let lastName = document.querySelector("#lastName").value; 
     if (/^([A-Za-z\s]{3,20})?([-]{0,1})?([A-Za-z]{3,20})$/.test(lastName)) {
@@ -58,6 +64,9 @@ function isLastNameValid () {
     return false;        
 }
 
+document.querySelector("#address").addEventListener('input', () => {
+    isAddressValid ()
+})
 function isAddressValid () {
     let address = document.querySelector("#address").value;
     if (/^[A-Za-z0-9\,\s]{5,100}$/.test(address)) {
@@ -68,6 +77,9 @@ function isAddressValid () {
     return false;    
 }
 
+document.querySelector("#city").addEventListener('input', () => {
+    isCityValid ()
+})
 function isCityValid () {
     let city = document.querySelector("#city").value;
     if (/^([A-Za-z\s]{3,20})?([-]{0,1})?([A-Za-z]{3,20})$/.test(city)) {
@@ -78,6 +90,9 @@ function isCityValid () {
     return false;    
 }
 
+document.querySelector("#email").addEventListener('input', () => {
+    isEmailValid ()
+})
 function isEmailValid () {
     let email = document.querySelector("#email").value;
     if (/^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$/.test(email)) {

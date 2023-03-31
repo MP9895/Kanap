@@ -7,6 +7,10 @@ if (isCartEmpty) {
     document.querySelector('.cart').remove();
 }
 else {
+    buildCart()
+}
+
+async function buildCart () {
     const allProducts = await fetchData("http://localhost:3000/api/products/")
     const products = buildCompleteList(allProducts)
     display(products);
@@ -16,6 +20,7 @@ else {
 }
 
 function display(products) {
+    document.querySelector('#cart__items').innerHTML = '';
     products.forEach(product => { displayOne(product) })
 }
 
@@ -59,22 +64,6 @@ function buildCompleteList(all) {
     return list;
 }
 
-function listenForProductDeletion() {
-    document.querySelectorAll('.deleteItem').forEach(button => {
-        button.addEventListener('click', function(event) {
-            let id = event.target.closest('article').getAttribute("data-id");
-            let color = event.target.closest('article').getAttribute("data-color");
-
-            let basket = get('basket');  
-            basket = basket.filter(element => ! (element.id === id && element.color === color));
-            store('basket', basket)
-
-            alert('Vous avez bien supprimé votre produit du panier');
-            window.location.reload();
-        })
-    })
-}
-
 function displayTotal(products) {
     let qty = 0
     let total = 0
@@ -87,6 +76,22 @@ function displayTotal(products) {
 
     document.querySelector('#totalPrice').innerText = price(total)
     document.querySelector('#totalQuantity').innerText = qty
+}
+
+function listenForProductDeletion() {
+    document.querySelectorAll('.deleteItem').forEach(button => {
+        button.addEventListener('click', function(event) {
+            let id = event.target.closest('article').getAttribute("data-id");
+            let color = event.target.closest('article').getAttribute("data-color");
+
+            let basket = get('basket');  
+            basket = basket.filter(element => ! (element.id === id && element.color === color));
+            store('basket', basket)
+
+            alert('Vous avez bien supprimé votre produit du panier');
+            buildCart()
+        })
+    })
 }
 
 function listenForQuantityChange() {
@@ -110,7 +115,7 @@ function listenForQuantityChange() {
             product.quantity = qty;
             
             store('basket', products);
-            window.location.reload();
+            buildCart()
         })
     });
 }
